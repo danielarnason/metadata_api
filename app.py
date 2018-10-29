@@ -1,5 +1,5 @@
 from flask import Flask, jsonify
-from flask_restful import Api, Resource
+from flask_restful import Api, Resource, reqparse
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 
@@ -35,6 +35,7 @@ class MetadataSchema(ma.ModelSchema):
 
 
 metadata_schema = MetadataSchema()
+parser = reqparse.RequestParser()
 
 
 class MetadataList(Resource):
@@ -43,6 +44,21 @@ class MetadataList(Resource):
     def get(self):
         metadata = Metadata.query.all()
         return metadata_schema.jsonify(metadata, many=True)
+
+    def post(self):
+        parser.add_argument('schema', type=str, required=True)
+        parser.add_argument('tablename', type=str, required=True)
+        args = parser.parse_args()
+
+        ny_data = Metadata(schema=args['schema'], tablename=args['tablename'])
+        db.session.add(ny_data)
+        db.session.commit()
+
+        return {
+            'status': True,
+            'message': 'Ny tabel gemt i db'
+        }, 200
+        
 
 
 api.add_resource(MetadataList, "/metadata")
