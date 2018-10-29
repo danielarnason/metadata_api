@@ -7,6 +7,7 @@ name = "pypi"
 flask = "*"
 flask-restful = "*"
 "psycopg2-binary" = "*"
+flask-sqlalchemy = "*"
 
 [dev-packages]
 
