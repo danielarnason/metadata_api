@@ -4,7 +4,9 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres@localhost:5432/danielarnason"
+app.config[
+    "SQLALCHEMY_DATABASE_URI"
+] = "postgresql://postgres@localhost:5432/danielarnason"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 api = Api(app)
@@ -46,19 +48,37 @@ class MetadataList(Resource):
         return metadata_schema.jsonify(metadata, many=True)
 
     def post(self):
-        parser.add_argument('schema', type=str, required=True)
-        parser.add_argument('tablename', type=str, required=True)
+        parser.add_argument("schema", type=str, required=True)
+        parser.add_argument("tablename", type=str, required=True)
+        parser.add_argument(
+            "ansvarlig", type=str, required=False, default=None, store_missing=True
+        )
+        parser.add_argument(
+            "center", type=str, required=False, default=None, store_missing=True
+        )
+        parser.add_argument(
+            "email", type=str, required=False, default=None, store_missing=True
+        )
+        parser.add_argument(
+            "beskrivelse", type=str, required=False, default=None, store_missing=True
+        )
         args = parser.parse_args()
 
-        ny_data = Metadata(schema=args['schema'], tablename=args['tablename'])
-        db.session.add(ny_data)
+        ny_metadata = Metadata(
+            schema=args["schema"],
+            tablename=args["tablename"],
+            ansvarlig=args["ansvarlig"],
+            center=args["center"],
+            email=args["email"],
+            beskrivelse=args["beskrivelse"],
+        )
+
+        db.session.add(ny_metadata)
         db.session.commit()
 
         return {
-            'status': True,
-            'message': 'Ny tabel gemt i db'
-        }, 200
-        
+            "message": f"Metadata om {ny_metadata.schema}.{ny_metadata.tablename} gemt i db"
+        }
 
 
 api.add_resource(MetadataList, "/metadata")
