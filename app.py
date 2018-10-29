@@ -41,7 +41,7 @@ parser = reqparse.RequestParser()
 
 
 class MetadataList(Resource):
-    """Resource for restful api"""
+    """Resource for the whole Metadata table"""
 
     def get(self):
         metadata = Metadata.query.all()
@@ -80,8 +80,20 @@ class MetadataList(Resource):
             "message": f"Metadata om {ny_metadata.schema}.{ny_metadata.tablename} gemt i db"
         }
 
+class MetadataItem(Resource):
+    """Resource for items in the metadata table"""
+
+    def delete(self, schema, tablename):
+        table = Metadata.query.filter_by(schema=schema, tablename=tablename).first()
+        db.session.delete(table)
+        db.session.commit()
+
+        return {'message': f'Metadata for {schema}.{tablename} slettet'}
+
+
 
 api.add_resource(MetadataList, "/metadata")
+api.add_resource(MetadataItem, '/metadata/<schema>.<tablename>')
 
 if __name__ == "__main__":
     app.run(debug=True)
