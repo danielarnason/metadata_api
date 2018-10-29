@@ -83,6 +83,10 @@ class MetadataList(Resource):
 class MetadataItem(Resource):
     """Resource for items in the metadata table"""
 
+    def get(self, schema, tablename):
+        table = Metadata.query.filter_by(schema=schema, tablename=tablename).first()
+        return metadata_schema.jsonify(table)
+
     def delete(self, schema, tablename):
         table = Metadata.query.filter_by(schema=schema, tablename=tablename).first()
         db.session.delete(table)
