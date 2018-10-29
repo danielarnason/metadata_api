@@ -94,6 +94,32 @@ class MetadataItem(Resource):
 
         return {'message': f'Metadata for {schema}.{tablename} slettet'}
 
+    def put(self, schema, tablename):
+        parser.add_argument(
+            "ansvarlig", type=str, required=False, default=None, store_missing=True
+        )
+        parser.add_argument(
+            "center", type=str, required=False, default=None, store_missing=True
+        )
+        parser.add_argument(
+            "email", type=str, required=False, default=None, store_missing=True
+        )
+        parser.add_argument(
+            "beskrivelse", type=str, required=False, default=None, store_missing=True
+        )
+        args = parser.parse_args()
+
+        table = Metadata.query.filter_by(schema=schema, tablename=tablename).first()
+        table.ansvarlig = args['ansvarlig']
+        table.center = args['center']
+        table.email = args['email']
+        table.beskrivelse = args['beskrivelse']
+        db.session.commit()
+
+        return {'message': f'Metadata for {schema}.{tablename} opdateret'}
+
+
+
 
 
 api.add_resource(MetadataList, "/metadata")
