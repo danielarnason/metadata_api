@@ -8,6 +8,8 @@ flask = "*"
 flask-restful = "*"
 "psycopg2-binary" = "*"
 flask-sqlalchemy = "*"
+flask-marshmallow = "*"
+marshmallow-sqlalchemy = "*"
 
 [dev-packages]
 
