@@ -33,7 +33,7 @@ class Metadata(db.Model):
     beskrivelse = db.Column(db.Text, nullable=True)
 
     def __repr__(self):
-        return f"Metadata({self.id}, {self.schema}, {self.tablename})"
+        return f"Metadata({self.id}, {self.themename})"
 
 
 class MetadataSchema(ma.ModelSchema):
@@ -75,6 +75,9 @@ class MetadataList(Resource):
             "beskrivelse", type=str, required=False, default=None, store_missing=True
         )
         args = parser.parse_args()
+
+        if len(Metadata.query.filter_by(themename=args['themename']).all()) > 0:
+            return {'message': f'Metadata om {args["themename"]} eksisterer i forvejen'}
 
         ny_metadata = Metadata(
             themename=args["themename"],
