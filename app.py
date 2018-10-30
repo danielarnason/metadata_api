@@ -24,10 +24,11 @@ class Metadata(db.Model):
     """Model i databasen"""
 
     id = db.Column(db.Integer, primary_key=True)
-    schema = db.Column(db.String(100), unique=False, nullable=False)
-    tablename = db.Column(db.String(100), unique=False, nullable=False)
+    themename = db.Column(db.String(100), unique=False, nullable=True)
     center = db.Column(db.String(3), unique=False, nullable=True)
+    afdeling = db.Column(db.String(100), unique=False, nullable=True)
     email = db.Column(db.String(100), unique=False, nullable=True)
+    telefonnr = db.Column(db.String(8), unique=False, nullable=True)
     ansvarlig = db.Column(db.String(100), unique=False, nullable=True)
     beskrivelse = db.Column(db.Text, nullable=True)
 
@@ -54,8 +55,7 @@ class MetadataList(Resource):
         return metadata_schema.jsonify(metadata, many=True)
 
     def post(self):
-        parser.add_argument("schema", type=str, required=True)
-        parser.add_argument("tablename", type=str, required=True)
+        parser.add_argument("themename", type=str, required=True)
         parser.add_argument(
             "ansvarlig", type=str, required=False, default=None, store_missing=True
         )
@@ -63,7 +63,13 @@ class MetadataList(Resource):
             "center", type=str, required=False, default=None, store_missing=True
         )
         parser.add_argument(
+            "afdeling", type=str, required=False, default=None, store_missing=True
+        )
+        parser.add_argument(
             "email", type=str, required=False, default=None, store_missing=True
+        )
+        parser.add_argument(
+            "telefonnr", type=str, required=False, default=None, store_missing=True
         )
         parser.add_argument(
             "beskrivelse", type=str, required=False, default=None, store_missing=True
@@ -71,10 +77,11 @@ class MetadataList(Resource):
         args = parser.parse_args()
 
         ny_metadata = Metadata(
-            schema=args["schema"],
-            tablename=args["tablename"],
+            themename=args["themename"],
             ansvarlig=args["ansvarlig"],
             center=args["center"],
+            afdeling=args["afdeling"],
+            telefonnr=args["telefonnr"],
             email=args["email"],
             beskrivelse=args["beskrivelse"],
         )
@@ -83,27 +90,27 @@ class MetadataList(Resource):
         db.session.commit()
 
         return {
-            "message": f"Metadata om {ny_metadata.schema}.{ny_metadata.tablename} gemt i db"
+            "message": f"Metadata om {ny_metadata.themename} gemt i db"
         }
 
 class MetadataItem(Resource):
     """Resource for items in the metadata table"""
 
-    def get(self, schema, tablename):
-        table = Metadata.query.filter_by(schema=schema, tablename=tablename).first()
+    def get(self, themename):
+        table = Metadata.query.filter_by(themename=themename).first()
         return metadata_schema.jsonify(table)
 
-    def delete(self, schema, tablename):
-        table = Metadata.query.filter_by(schema=schema, tablename=tablename).first()
+    def delete(self, themename):
+        table = Metadata.query.filter_by(themename=themename).first()
         db.session.delete(table)
         db.session.commit()
 
-        return {'message': f'Metadata for {schema}.{tablename} slettet'}
+        return {'message': f'Metadata for {table.themename} slettet'}
 
 
 
 api.add_resource(MetadataList, "/metadata")
-api.add_resource(MetadataItem, '/metadata/<schema>.<tablename>')
+api.add_resource(MetadataItem, '/metadata/<themename>')
 
 if __name__ == "__main__":
     app.run(debug=True)
