@@ -52,7 +52,7 @@ class MetadataList(Resource):
 
     def get(self):
         metadata = Metadata.query.all()
-        return metadata_schema.jsonify(metadata, many=True)
+        return metadata_schema.jsonify(metadata, many=True), 200
 
     def post(self):
         parser.add_argument("themename", type=str, required=True)
@@ -77,7 +77,7 @@ class MetadataList(Resource):
         args = parser.parse_args()
 
         if len(Metadata.query.filter_by(themename=args['themename']).all()) > 0:
-            return {'message': f'Metadata om {args["themename"]} eksisterer i forvejen'}
+            return {'message': f'Metadata om {args["themename"]} eksisterer i forvejen'}, 422
 
         ny_metadata = Metadata(
             themename=args["themename"],
@@ -94,21 +94,21 @@ class MetadataList(Resource):
 
         return {
             "message": f"Metadata om {ny_metadata.themename} gemt i db"
-        }
+        }, 201
 
 class MetadataItem(Resource):
     """Resource for items in the metadata table"""
 
     def get(self, themename):
         table = Metadata.query.filter_by(themename=themename).first()
-        return metadata_schema.jsonify(table)
+        return metadata_schema.jsonify(table), 200
 
     def delete(self, themename):
         table = Metadata.query.filter_by(themename=themename).first()
         db.session.delete(table)
         db.session.commit()
 
-        return {'message': f'Metadata for {table.themename} slettet'}
+        return {'message': f'Metadata for {table.themename} slettet'}, 204
 
 
 
