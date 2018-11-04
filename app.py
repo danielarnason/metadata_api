@@ -52,7 +52,7 @@ class MetadataList(Resource):
 
     def get(self):
         metadata = Metadata.query.all()
-        return metadata_schema.jsonify(metadata, many=True), 200
+        return metadata_schema.jsonify(metadata, many=True)
 
     def post(self):
         parser.add_argument("themename", type=str, required=True)
@@ -101,7 +101,7 @@ class MetadataItem(Resource):
 
     def get(self, themename):
         table = Metadata.query.filter_by(themename=themename).first()
-        return metadata_schema.jsonify(table), 200
+        return metadata_schema.jsonify(table)
 
     def delete(self, themename):
         table = Metadata.query.filter_by(themename=themename).first()
