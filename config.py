@@ -12,5 +12,5 @@ class DevConfig(Config):
 
 class TestingConfig(Config):
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///' + os.path.realpath('app.db')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///' + os.path.realpath('test_app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
