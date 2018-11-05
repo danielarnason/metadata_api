@@ -10,12 +10,11 @@ db = SQLAlchemy()
 ma = Marshmallow()
 migrate = Migrate()
 
-def create_app():
+def create_app(config):
 
     app = Flask(__name__)
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL') or 'sqlite:///' + os.path.realpath('app.db')
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config.from_object(config)
 
     from api.resources import MetadataList, MetadataItem
     meta_api.add_resource(MetadataList, "/metadata")
