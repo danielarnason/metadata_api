@@ -3,5 +3,5 @@ import os
 import config
 
 if __name__ == '__main__':
-    app = create_app()
+    app = create_app(config.DevConfig)
     app.run()

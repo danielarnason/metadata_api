@@ -10,10 +10,7 @@ db = SQLAlchemy()
 ma = Marshmallow()
 migrate = Migrate()
 
-def create_app(config=None):
-
-    if config is None:
-        raise ValueError("Mangler at vælge config")
+def create_app(config):
 
     app = Flask(__name__)
 
